@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>开张 KAIZHANG · 学 → 做 → 成</title>
+<meta name="description" content="开张：长得像 AI coding 工具的学习工作台。零基础入门 → 做出第一个 AI 产品 → 发到广场拿到第一批反馈。" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="开张 KAIZHANG · 学 → 做 → 成" />
+<meta property="og:description" content="从零基础到做出第一个 AI 产品，再到发到广场拿第一批反馈。" />
+<meta property="og:image" content="/assets/og.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="开张 KAIZHANG" />
+<meta name="twitter:description" content="AI 产品学习工作台：学 → 做 → 成。" />
+<meta name="twitter:image" content="/assets/og.svg" />
+<link rel="icon" href="./assets/favicon.svg?v=logo2" type="image/svg+xml" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="./css/main.css" />
+<link rel="stylesheet" href="./css/markdown.css" />
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body class="theme-dark">
+
+<!-- ============== 桌面背景 ============== -->
+<div id="backdrop" aria-hidden="true">
+  <div class="grain"></div>
+  <div class="aurora a1"></div>
+  <div class="aurora a2"></div>
+  <div class="aurora a3"></div>
+  <div class="dock">
+    <span class="dock-time" id="dockTime">—</span>
+    <span class="dot"></span>
+    <span class="dock-text">开张 · 你打开的第一个工作台</span>
+  </div>
+</div>
+
+<!-- ============== Mac 浮窗 ============== -->
+<main id="mac-window" class="mac-window" role="application" aria-label="开张工作台">
+
+  <!-- 顶部窗口栏 -->
+  <header class="title-bar">
+    <div class="traffic-lights" aria-label="窗口控制">
+      <button class="tl tl-close" title="关闭" aria-label="关闭"></button>
+      <button class="tl tl-min"   title="最小化" aria-label="最小化"></button>
+      <button class="tl tl-max"   title="全屏" aria-label="全屏"></button>
+    </div>
+
+    <div class="window-tabs" id="windowTabs">
+      <!-- 首页 / Welcome -->
+      <button class="wtab active" data-route="welcome" title="回到首页">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        首页
+      </button>
+      <!-- 切换：学习 / 技能 / 发布广场 / 我的 -->
+      <button class="wtab" data-route="learn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V6a2 2 0 0 1 2-2h11l3 3v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h7M8 12h7M8 16h5"/></svg>
+        学习
+      </button>
+      <button class="wtab" data-route="skills">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/></svg>
+        工具箱
+      </button>
+      <button class="wtab" data-route="square">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        发布广场
+      </button>
+      <button class="wtab" data-route="me">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+        我的
+      </button>
+    </div>
+
+    <div class="title-actions">
+      <button class="ti" id="btnQuickNote" title="全局记笔记">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><polyline points="14 3 14 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+        <span class="hide-sm">记笔记</span>
+      </button>
+      <button class="ti" id="btnBugGame" title="老板跳 Bug 彩蛋">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="14" rx="6" ry="7"/><line x1="12" y1="7" x2="12" y2="5"/><line x1="9" y1="3" x2="11" y2="5"/><line x1="15" y1="3" x2="13" y2="5"/><line x1="3" y1="14" x2="6" y2="14"/><line x1="18" y1="14" x2="21" y2="14"/><line x1="5" y1="20" x2="7" y2="18"/><line x1="19" y1="20" x2="17" y2="18"/></svg>
+        <span class="hide-sm">跳Bug</span>
+      </button>
+      <button class="ti" id="btnCmd" title="CMD 控制台">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span class="hide-sm">CMD</span>
+      </button>
+      <button class="ti" id="btnTheme" title="切换主题">
+        <svg id="iconTheme" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="ti btn-login" id="btnLogin">
+        <span id="loginText">登录</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============== 内容区切换器 ============== -->
+  <section class="window-body" id="windowBody">
+
+    <!-- =========== P01 欢迎态（默认） =========== -->
+    <div class="route route-welcome" id="route-welcome" data-route="welcome">
+      <div class="welcome-wrap">
+        <div class="welcome-brand">
+          <img class="brand-logo" src="./assets/kaizhang-logo.svg?v=logo2" alt="开张 KAIZHANG logo" />
+          <div class="welcome-name">
+            <h1>开张 <span class="muted">KAIZHANG</span></h1>
+            <p>学 <span class="dotline">·</span> 做 <span class="dotline">·</span> 成 — 你的第一个 AI 产品工作台</p>
+          </div>
+        </div>
+
+        <form id="welcomeForm" class="welcome-form">
+          <div class="welcome-input-wrap" id="welcomeInputWrap">
+            <textarea id="welcomeInput" rows="1" placeholder="想做点什么？描述一个想法，或先随便问问 — 比如 “帮我解释一下 MCP 是什么”" autocomplete="off"></textarea>
+            <div class="welcome-input-toolbar">
+              <div class="left">
+                <button type="button" class="chip" id="welcomeAttach" title="附件 / 图片">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.5 12.5 21a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/></svg>
+                </button>
+                <button type="button" class="chip" id="welcomeMic" title="语音输入">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                </button>
+                <span class="model-pill" id="welcomeModel">ark-code-latest</span>
+              </div>
+              <button type="submit" class="btn-primary" id="welcomeSend">
+                进入工作台
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="preset-row" id="presetRow"></div>
+        </form>
+
+        <p class="welcome-tip" id="welcomeTip">提示：第一次来？点 「我零基础带我开始」。已经有想法？直接输入回车进入。</p>
+      </div>
+      <div class="welcome-foot">
+        <span>v2.0 · 2026-06</span><span class="dot-tiny"></span>
+        <span>纯前端 · 部署于 Vercel</span><span class="dot-tiny"></span>
+        <span>资讯 × 咨询同源</span>
+      </div>
+    </div>
+
+    <!-- =========== 主三栏工作台（学习/技能/广场/我的 都复用） =========== -->
+    <div class="route route-work" id="route-work" hidden>
+      <!-- 左栏 -->
+      <aside class="col col-left" id="colLeft">
+        <div class="col-head">
+          <div class="col-title" id="leftTitle">学习路径</div>
+          <button class="icon-btn" id="newNoteBtn" title="新建笔记">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <div class="col-scroll" id="leftScroll"></div>
+        <div class="col-foot" id="leftFoot">
+          <button class="user-pill" id="userPill">
+            <span class="avatar" id="userAvatar">游</span>
+            <span class="user-name" id="userName">游客 · 未登录</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="splitter splitter-left" data-split="left"></div>
+
+      <!-- 中栏 -->
+      <section class="col col-center" id="colCenter">
+        <div class="center-head" id="centerHead">
+          <div class="crumbs" id="crumbs">学习路径 · Phase 0 · 认知与选型</div>
+          <div class="head-actions">
+            <button class="icon-btn" id="centerPrev" title="上一张">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="icon-btn" id="centerNext" title="下一张">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="icon-btn" id="centerArchive" title="归档此卡为笔记">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="center-scroll" id="centerScroll"></div>
+      </section>
+
+      <div class="splitter splitter-right" data-split="right"></div>
+
+      <!-- 右栏 AI -->
+      <aside class="col col-right" id="colRight">
+        <div class="ai-head">
+          <div class="ai-title">
+            <span class="ai-dot"></span>
+            店小二 <span class="ai-sub">· 与资讯互通</span>
+          </div>
+          <div class="ai-actions">
+            <label class="persona-switch" title="切换人格">
+              <input type="checkbox" id="personaToggle" />
+              <span class="ps-track">
+                <span class="ps-thumb">
+                  <svg id="psIcon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 14c1.5 1.5 6.5 1.5 8 0"/><circle cx="9" cy="10" r=".8" fill="currentColor"/><circle cx="15" cy="10" r=".8" fill="currentColor"/></svg>
+                </span>
+              </span>
+              <span class="ps-label" id="psLabel">鼓励</span>
+            </label>
+            <button class="icon-btn" id="aiHistoryBtn" title="历史对话">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/><path d="M12 7v5l3 2"/></svg>
+            </button>
+            <button class="icon-btn" id="aiNewBtn" title="新建对话">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="ai-thread" id="aiThread"></div>
+        <div class="ai-input-wrap">
+          <div class="attach-preview" id="attachPreview" hidden></div>
+          <textarea id="aiInput" rows="1" placeholder="问点什么？支持图片/语音/选中文本…（Enter 发送，Shift+Enter 换行）"></textarea>
+          <div class="ai-input-toolbar">
+            <div class="left">
+              <button class="chip" id="aiAttachBtn" title="图片">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </button>
+              <button class="chip" id="aiMicBtn" title="语音">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+              </button>
+              <button class="chip" id="aiCardCtx" title="挂载当前卡片">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0z"/><polyline points="12 7 12 12 16 14"/></svg>
+              </button>
+              <span class="model-pill mini">ark-code-latest</span>
+            </div>
+            <button class="btn-primary mini" id="aiSendBtn">
+              发送
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Status bar -->
+  <footer class="status-bar">
+    <span class="sb sb-left">
+      <span class="sb-dot ok"></span>
+      <span id="statusText">就绪</span>
+    </span>
+    <span class="sb sb-center" id="statusCenter">学 → 做 → 成</span>
+    <span class="sb sb-right" id="statusRight">
+      <span id="pointsTxt">积分 0</span>
+      <span class="sep">·</span>
+      <span id="phaseTxt">P0</span>
+    </span>
+  </footer>
+</main>
+
+<!-- ===== 选中工具条 ===== -->
+<div id="selToolbar" class="sel-toolbar" hidden>
+  <button class="stb stb-primary" id="stbAsk">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 11.5a8.4 8.4 0 0 1-1 4L21 21l-5-1.5a8.5 8.5 0 1 1 5-8z"/></svg>
+    问 AI
+  </button>
+  <button class="stb" id="stbArchive">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>
+    归档
+  </button>
+</div>
+
+<!-- ===== Toast 容器 ===== -->
+<div id="toastStack" class="toast-stack"></div>
+
+<!-- ===== 邀请码登录 Modal ===== -->
+<div id="modalLogin" class="modal" hidden>
+  <div class="modal-card">
+    <button class="modal-x" id="loginClose" aria-label="关闭">×</button>
+    <h3>邀请码登录</h3>
+    <p class="muted">开张目前以邀请码内测。AI 副驾、归档、发布广场需先登录。</p>
+    <input type="text" id="inviteInput" placeholder="输入邀请码（例：KAIZHANG-2026）" />
+    <div class="modal-actions">
+      <button class="btn-ghost" id="inviteTry">用演示码体验</button>
+      <button class="btn-primary" id="inviteOK">进入</button>
+    </div>
+    <p class="muted tiny">演示码：<code>KAIZHANG-2026</code> · <code>VIBE-GUEST</code> · <code>DEMO</code></p>
+  </div>
+</div>
+
+<!-- ===== 全局记笔记 Modal ===== -->
+<div id="modalNote" class="modal" hidden>
+  <div class="modal-card wide note-modal-card">
+    <button class="modal-x" id="noteClose" aria-label="关闭">×</button>
+    <h3>记一条笔记</h3>
+    <p class="muted">支持语音输入；会保存在本地浏览器，可在「我的 → 我的笔记」查看。</p>
+    <form id="noteForm" class="note-form">
+      <label>标题
+        <input type="text" id="noteTitle" maxlength="60" required placeholder="例如：MCP 像 USB-C" />
+      </label>
+      <label>来源
+        <input type="text" id="noteSource" placeholder="自动填当前 Phase / 卡片，也可以手动改" />
+      </label>
+      <label class="full">内容
+        <textarea id="noteBody" rows="7" required placeholder="写下你刚刚想留下来的东西…"></textarea>
+      </label>
+      <div class="note-modal-toolbar full">
+        <button type="button" class="btn-ghost mini" id="noteVoiceBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+          语音输入
+        </button>
+        <button type="button" class="btn-ghost mini" id="noteUseSelection">填入当前选中文本</button>
+        <button type="button" class="btn-ghost mini" id="noteClear">清空</button>
+        <button type="submit" class="btn-primary mini">保存笔记</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== AI 历史抽屉 ===== -->
+<div id="historyDrawer" class="drawer" hidden>
+  <div class="drawer-head">
+    <div>历史对话</div>
+    <button class="icon-btn" id="historyClose">×</button>
+  </div>
+  <div class="drawer-body" id="historyList"></div>
+</div>
+
+<!-- ===== 发布作品 Modal ===== -->
+<div id="modalPublish" class="modal" hidden>
+  <div class="modal-card wide">
+    <button class="modal-x" id="publishClose" aria-label="关闭">×</button>
+    <h3 class="publish-title"><span class="publish-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><polyline points="14 3 14 9 20 9"/><path d="M12 17V11"/><polyline points="9 14 12 11 15 14"/></svg></span>发布我的作品</h3>
+    <p class="muted">发布消耗 10 积分。完成后会触发「开张大吉」仪式 🧧</p>
+    <form id="publishForm" class="publish-form">
+      <label>产品名 <input name="name" maxlength="20" required placeholder="≤20 字" /></label>
+      <label>一句话介绍 <input name="tagline" maxlength="60" required placeholder="≤60 字" /></label>
+      <label>类型
+        <select name="type" required>
+          <option value="tool">工具</option><option value="design">设计</option><option value="content">内容</option><option value="ai">AI</option>
+          <option value="commerce">电商</option><option value="mobile">移动</option><option value="game">游戏</option><option value="life">生活</option>
+        </select>
+      </label>
+      <label>技术栈 <input name="stack" placeholder="逗号分隔，例：Next.js, Supabase, Stripe" /></label>
+      <label>状态
+        <select name="status">
+          <option value="idea">想法</option><option value="dev">开发中</option><option value="live" selected>已上线</option>
+          <option value="iter">改版中</option>
+        </select>
+      </label>
+      <label>链接 <input name="link" placeholder="https://" /></label>
+      <div class="full screenshot-uploader" id="screenshotDrop">
+        <div class="su-main">
+          <div class="su-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div>
+            <h4>上传作品截图</h4>
+            <p>建议 16:10，PNG/JPG/WebP，最多 5 张；会自动压缩为 WebP 存在本地。</p>
+          </div>
+          <button type="button" class="btn-ghost mini" id="pickScreenshots">选择图片</button>
+        </div>
+        <div class="su-thumbs" id="screenshotThumbs"></div>
+        <input type="file" id="screenshotInput" accept="image/png,image/jpeg,image/webp" multiple hidden />
+      </div>
+      <label class="full">想要的反馈
+        <textarea name="wants" rows="3" placeholder="说清你最想得到什么帮助"></textarea>
+      </label>
+      <label class="full">AI 宣发物料
+        <textarea name="promoDraft" id="promoDraft" rows="5" placeholder="填写产品名后点下方按钮，店小二会在这里生成文案，不会跳走"></textarea>
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="publishAIDraft">让 AI 帮我写宣发物料</button>
+        <button type="submit" class="btn-primary">开张！</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== 开张大吉 仪式 ===== -->
+<div id="ceremony" class="ceremony" hidden>
+  <div class="cer-banner">
+    <div class="silk left"></div><div class="silk right"></div>
+    <div class="cer-stamp">
+      <div class="seal">開張<br/>大吉</div>
+      <h2 id="cerTitle">🧧 恭喜开张！</h2>
+      <p id="cerSub"></p>
+      <p class="muted small">点击任意位置继续</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CMD 控制台 ===== -->
+<div id="cmdConsole" class="cmd" hidden>
+  <div class="cmd-head">
+    <span>kaizhang@web:~$ — 控制台彩蛋（Esc 退出）</span>
+    <button class="icon-btn" id="cmdClose">×</button>
+  </div>
+  <div class="cmd-body" id="cmdBody"></div>
+  <div class="cmd-input-row">
+    <span class="cmd-ps">kaizhang@web:~$</span>
+    <input id="cmdInput" type="text" autocomplete="off" spellcheck="false" />
+  </div>
+</div>
+
+<!-- ===== 今日宜忌悬浮卡（可隐藏） ===== -->
+<div id="almanac" class="almanac" hidden>
+  <div class="al-head">
+    <span class="al-stamp">宜開張</span>
+    <button class="icon-btn" id="alClose">×</button>
+  </div>
+  <div class="al-body">
+    <div class="al-col yi">
+      <h5>宜</h5>
+      <ul id="alYi"></ul>
+    </div>
+    <div class="al-col ji">
+      <h5>忌</h5>
+      <ul id="alJi"></ul>
+    </div>
+  </div>
+  <div class="al-foot">
+    <span>今日手气：<b id="alModel">—</b></span>
+    <span>流量吉位：<b id="alPos">—</b></span>
+    <span>宜搭档：<b id="alBuddy">—</b></span>
+    <button class="btn-ghost mini" id="alShare">分享</button>
+    <button class="btn-ghost mini" id="alReroll">再抽一签</button>
+  </div>
+</div>
+
+<button id="almanacFab" class="almanac-fab" title="今日宜忌">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+</button>
+
+<!-- ===== 老板跳 Bug · 浮动终端窗 ===== -->
+<div id="bossGame" class="boss-window" hidden>
+  <div class="bw-head">
+    <span class="bw-lights">
+      <i class="bwl r"></i><i class="bwl y"></i><i class="bwl g"></i>
+    </span>
+    <span class="bw-title">kaizhang · 老板跳 Bug</span>
+    <span class="bw-score">最高 <b id="bgHigh">0</b> · 得分 <b id="bgScore">0</b></span>
+    
+  </div>
+  <canvas id="bgCanvas" width="640" height="180"></canvas>
+  <div class="bw-foot">
+    <kbd>空格</kbd>/<kbd>↑</kbd> 跳　<kbd>↓</kbd> 低头　<kbd>P</kbd> 暂停　<kbd>R</kbd> 重来　<kbd>Esc</kbd> 关
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" hidden />
+
+<script type="module" src="./js/app.js?v=20260625-notecard1"></script>
+</body>
+</html>
