@@ -417,7 +417,6 @@ function renderPhaseIndex(pid) {
     const pct = totalCards ? Math.round(doneCount / totalCards * 100) : 0;
     const done = State.doneCheckpoints.includes(ph.id);
     const node = html(`<button class="vp-node ${ph.id === current.id ? 'active' : ''} ${done ? 'done' : ''}" data-pid="${ph.id}">
-      <span class="vp-line"></span>
       <span class="vp-index">${String(i + 1).padStart(2, '0')}</span>
       <span class="vp-main">
         <span class="vp-meta">${ph.id} · ${done ? '已通关' : (pct ? pct + '% 进度' : '未开始')} · ${doneCount}/${totalCards} 张</span>
