@@ -2599,3 +2599,43 @@ body.theme-dark .brand-logo {
 .note-detail .nd-body.structured-note .ais-card {
   background: var(--panel-2);
 }
+
+/* v20 · 首页去掉底部说明 + 学习路径卡片排版重整 */
+.route-welcome { padding-bottom: 44px !important; }
+.welcome-foot { display: none !important; }
+.vertical-path { max-width: 760px !important; }
+.vp-node {
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  min-height: auto !important;
+  align-items: center !important;
+  padding: 16px 18px !important;
+  gap: 14px !important;
+}
+.vp-index { margin-top: 0 !important; }
+.vp-main { padding-top: 0 !important; width: 100%; }
+.vp-meta { font-size: 11px; color: var(--text-3); }
+.vp-title { min-height: 0 !important; font-size: 15px; margin-top: 1px; }
+.vp-goal { min-height: 0 !important; max-width: 100%; }
+.vp-count { display: none !important; }
+.vp-progress { width: 100%; }
+@media(max-width:760px){ .vp-node{grid-template-columns:42px 1fr!important;} }
+
+/* v20 · 首页去掉底部说明 + 学习路径卡片排版重整 */
+.route-welcome { padding-bottom: 44px !important; }
+.welcome-foot { display: none !important; }
+.vertical-path { max-width: 760px !important; }
+.vp-node {
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  min-height: auto !important;
+  align-items: center !important;
+  padding: 16px 18px !important;
+  gap: 14px !important;
+}
+.vp-index { margin-top: 0 !important; }
+.vp-main { padding-top: 0 !important; width: 100%; }
+.vp-meta { font-size: 11px; color: var(--text-3); }
+.vp-title { min-height: 0 !important; font-size: 15px; margin-top: 1px; }
+.vp-goal { min-height: 0 !important; max-width: 100%; }
+.vp-count { display: none !important; }
+.vp-progress { width: 100%; }
+@media(max-width:760px){ .vp-node{grid-template-columns:42px 1fr!important;} }

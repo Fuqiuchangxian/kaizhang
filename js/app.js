@@ -420,12 +420,11 @@ function renderPhaseIndex(pid) {
       <span class="vp-line"></span>
       <span class="vp-index">${String(i + 1).padStart(2, '0')}</span>
       <span class="vp-main">
-        <span class="vp-meta">${ph.id} · ${done ? '已通关' : (pct ? pct + '% 进度' : '未开始')}</span>
+        <span class="vp-meta">${ph.id} · ${done ? '已通关' : (pct ? pct + '% 进度' : '未开始')} · ${doneCount}/${totalCards} 张</span>
         <span class="vp-title">${escapeHtml(ph.name)}</span>
         <span class="vp-goal">${escapeHtml(ph.goal)}</span>
         <span class="vp-progress"><i style="width:${pct}%"></i></span>
       </span>
-      <span class="vp-count">${doneCount}/${totalCards} 张</span>
     </button>`);
     node.addEventListener('click', () => {
       State.phaseId = ph.id;
