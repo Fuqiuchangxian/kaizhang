@@ -828,4 +828,138 @@ AGENTS.md 通常包含：
     repo: 'https://github.com/nextjs/saas-starter',
     tags: ['Next.js', 'SaaS', 'template'],
   },
+
+  {
+    id: 'AS-04', cat: 'agentskill', title: 'addyosmani/agent-skills',
+    use: '把高级工程师 workflows、质量门禁和最佳实践编码成结构化 Skill 文件',
+    stack: ['Claude Code', 'Cursor', 'Gemini', 'SKILL.md'],
+    body: `项目：https://github.com/addyosmani/agent-skills
+
+定位：把高级工程师的工程流程、质量门禁、最佳实践封装成可复用技能包。
+
+关键要点：
+- 每个 Skill = SKILL.md + scripts + references + assets。
+- 核心原则：Progressive Disclosure，避免一次性灌太多。
+- 不是提示词，是可执行工程流程：步骤、检查点、退出标准。`,
+    install: '打开 GitHub 仓库，按 README 复制或下载对应 skill 文件夹。',
+    repo: 'https://github.com/addyosmani/agent-skills',
+    tags: ['AgentSkills', 'engineering', 'quality-gate'],
+  },
+  {
+    id: 'AS-05', cat: 'agentskill', title: 'Agent Skills Directory',
+    use: '模块化、可复用的技能包目录，支持按项目上下文匹配技能',
+    stack: ['AgentSkills', 'Directory'],
+    body: `官网：https://dmgrok.github.io/agent_skills_directory/
+
+用途：作为 AgentSkills 目录化参考，了解如何按任务/项目上下文组织可复用技能。`,
+    repo: 'https://dmgrok.github.io/agent_skills_directory/',
+    tags: ['AgentSkills', 'directory', 'progressive-disclosure'],
+  },
+  {
+    id: 'CR-08', cat: 'rule', title: 'Cursor 官方 Rules 指南',
+    use: 'Cursor Rules 官方文档，理解规则类型、作用域和触发方式',
+    stack: ['Cursor', 'Rules'],
+    body: `官方文档：https://cursor.com/help/customization/rules
+
+最佳实践：规则要短、具体、指向示例；用 @filename 引用文件；纳入 Git；发现 Agent 重复犯错时再加规则。`,
+    repo: 'https://cursor.com/help/customization/rules',
+    tags: ['Cursor Rules', 'official'],
+  },
+  {
+    id: 'CR-09', cat: 'rule', title: 'Cursor Agent 最佳实践',
+    use: 'Cursor 官方 Agent 最佳实践，含 Plan Mode 和交付前自检',
+    stack: ['Cursor', 'Agent', 'Plan Mode'],
+    body: `官方文章：https://cursor.com/blog/agent-best-practices
+
+适合沉淀为团队规则：先计划再执行、小步提交、修改前说明影响范围、交付前自检测试与安全边界。`,
+    repo: 'https://cursor.com/blog/agent-best-practices',
+    tags: ['Cursor', 'Agent', 'Plan Mode'],
+  },
+  {
+    id: 'M-12', cat: 'mcp', title: 'MCP 官方架构文档',
+    use: '理解 MCP Host / Client / Server、Resources / Tools / Prompts 三大能力',
+    stack: ['MCP', 'Architecture'],
+    body: `官方文档：https://modelcontextprotocol.io/docs/learn/architecture.md
+
+MCP = AI 应用的 USB-C 接口。
+三大能力：Resources / Tools / Prompts。
+传输层：Stdio、SSE、Streamable HTTP。`,
+    repo: 'https://modelcontextprotocol.io/docs/learn/architecture.md',
+    tags: ['MCP', 'architecture', 'official'],
+  },
+  {
+    id: 'M-13', cat: 'mcp', title: 'MCP 本地服务器连接教程',
+    use: '官方教程：连接本地 MCP server，适合 filesystem / browser / db 类工具',
+    stack: ['MCP', 'Local Server'],
+    body: `官方教程：https://modelcontextprotocol.io/docs/develop/connect-local-servers
+
+最小配置示例：
+\`\`\`json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"]
+    }
+  }
+}
+\`\`\``,
+    repo: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
+    tags: ['MCP', 'config', 'local'],
+  },
+  {
+    id: 'T-04', cat: 'template', title: 'ai-agent-starter-kit',
+    use: 'TypeScript / Node.js 生产级 Agent 起步模板，包含记忆、工具执行和工作流自动化',
+    stack: ['TypeScript', 'Node.js', 'Agent'],
+    body: `npm：https://www.npmjs.com/package/ai-agent-starter-kit
+
+适合快速起一个工程化 Agent 项目。`,
+    repo: 'https://www.npmjs.com/package/ai-agent-starter-kit',
+    tags: ['starter', 'TypeScript', 'Agent'],
+  },
+  {
+    id: 'T-05', cat: 'template', title: 'create-agent-workflow-template',
+    use: '结构化工作流模板，帮助减少幻觉、控制 token、沉淀执行步骤',
+    stack: ['Workflow', 'Agent', 'Template'],
+    body: `npm：https://www.npmjs.com/package/create-agent-workflow-template
+
+适合从松散 prompt 迁移到结构化 workflow。`,
+    repo: 'https://www.npmjs.com/package/create-agent-workflow-template',
+    tags: ['workflow', 'starter'],
+  },
+  {
+    id: 'W-09', cat: 'workflow', title: 'Azure AI Agent 设计模式',
+    use: '顺序、并行、分层、群组聊天等 Agent 工作流设计模式',
+    stack: ['Workflow', 'Azure', 'Agent Design'],
+    body: `官方文档：https://learn.microsoft.com/bg-bg/azure/architecture/ai-ml/guide/ai-agent-design-patterns
+
+可参考模式：Sequential、Concurrent、Hierarchical、Group Chat。`,
+    repo: 'https://learn.microsoft.com/bg-bg/azure/architecture/ai-ml/guide/ai-agent-design-patterns',
+    tags: ['workflow', 'design-patterns'],
+  },
+  {
+    id: 'W-10', cat: 'workflow', title: 'LangGraph 工作流编排',
+    use: '主流 Agent 工作流编排框架，适合 DAG / 状态机 / 多步骤任务',
+    stack: ['LangGraph', 'Workflow', 'Agent'],
+    body: `官网：https://langchain-ai.github.io/langgraph/
+
+适合显式状态机、可恢复/可观测长任务、从 Agent Loop 走向可控 Workflow。`,
+    repo: 'https://langchain-ai.github.io/langgraph/',
+    tags: ['LangGraph', 'workflow'],
+  },
+  {
+    id: 'H-05', cat: 'harness', title: 'Agent = Model + Harness',
+    use: 'Harness Engineering 入门：工具封装、状态、记忆、反馈回路和安全约束',
+    stack: ['Harness', 'Agent Systems'],
+    body: `核心观点：Agent = Model + Harness。
+
+Harness 负责工具接口封装、外部状态管理、长任务记忆机制、上下文隔离与异步执行、多 Agent 协作协议、评估追踪回滚和安全边界。
+
+参考：
+- https://blog.csdn.net/leacock1991/article/details/159865376
+- https://flashcat.cloud/blog/harness-engineering-ai-agent-systems/
+- https://harness-engineering.ai/blog/agent-harness-architecture-how-the-system-works-under-the-hood/`,
+    refs: ['https://blog.csdn.net/leacock1991/article/details/159865376','https://flashcat.cloud/blog/harness-engineering-ai-agent-systems/','https://harness-engineering.ai/blog/agent-harness-architecture-how-the-system-works-under-the-hood/'],
+    tags: ['Harness', 'Agent Architecture'],
+  },
 ];
