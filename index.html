@@ -22,7 +22,7 @@
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
-<body class="theme-dark">
+<body class="theme-light">
 
 <!-- ============== 桌面背景 ============== -->
 <div id="backdrop" aria-hidden="true">
@@ -437,6 +437,49 @@
 
 <input type="file" id="fileInput" accept="image/*" hidden />
 
-<script type="module" src="./js/app.js?v=20260625-finalui1"></script>
+<!-- ===== 路线图圆圈按钮（视口级，窗口外） ===== -->
+<button id="roadmapFab" class="roadmap-fab" title="产品路线图 · 做出你的第一个产品" aria-label="产品路线图">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16 8 14 14 8 16 10 10 16 8" fill="currentColor"/></svg>
+</button>
+
+<!-- ===== 路线图 Modal ===== -->
+<div id="roadmapModal" class="modal roadmap-modal" hidden>
+  <div class="modal-card roadmap-card">
+    <button class="modal-x" id="roadmapClose" aria-label="关闭">×</button>
+    <header class="rm-header">
+      <div class="rm-kicker">PRODUCT ROADMAP</div>
+      <h3>做出你的第一个产品</h3>
+      <p class="muted">7 步走完，从想法到开张。每一步都能叫店小二来帮你动手。</p>
+    </header>
+    <div class="rm-timeline" id="rmTimeline"></div>
+    <footer class="rm-foot">
+      <span class="rm-progress" id="rmProgress">第 1 步 / 共 7 步</span>
+      <span class="rm-tip">点「去问店小二」开始这一步</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ===== Use Case 引导小窗（新用户首次自动弹） ===== -->
+<div id="useCaseModal" class="uc-modal" hidden>
+  <div class="uc-card">
+    <button class="uc-x" id="useCaseClose" aria-label="关闭">×</button>
+    <div class="uc-media">
+      <img id="ucImg" alt="开张功能示意" />
+    </div>
+    <div class="uc-text">
+      <h4 id="ucTitle"></h4>
+      <p id="ucDesc"></p>
+    </div>
+    <div class="uc-bar">
+      <div class="uc-dots" id="ucDots"></div>
+      <div class="uc-actions" id="ucActions">
+        <button class="btn-ghost mini" id="ucExplore" hidden>自行探索</button>
+        <button class="btn-primary mini" id="ucNext">下一步</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./js/app.js?v=20260710-uc2"></script>
 </body>
 </html>

@@ -34,6 +34,8 @@ const State = {
   worksLocal: [],             // 本地发布
   doneCards: [],              // 已读
   doneCheckpoints: [],        // phase id
+  roadmapStep: 1,             // 路线图当前步（1-7）
+  roadmapDone: [],            // 已完成的路线图步骤序号
 };
 
 // localStorage helpers
@@ -56,6 +58,7 @@ function saveState() {
       history: State.history, spicy: State.spicy, worksLocal: State.worksLocal,
       doneCards: State.doneCards, doneCheckpoints: State.doneCheckpoints,
       phaseId: State.phaseId,
+      roadmapStep: State.roadmapStep, roadmapDone: State.roadmapDone,
     }));
   } catch {}
 }
@@ -2518,6 +2521,151 @@ function newChat() {
 }
 
 // ============================================================
+//  路线图 · 做出你的第一个产品（右下角圆圈按钮）
+// ============================================================
+const ROADMAP_STEPS = [
+  {
+    title: '找到一个想法',
+    hint: '别空想，从你自己被坑过的痛点找。',
+    prompt: '我是路线图第 1 步。帮我用 5 分钟找到一个能做的小产品想法：先问我 3 个问题（你最近被什么坑过 / 你在工作中重复做什么 / 你愿意为什么付钱），根据我的回答给我 3 个具体想法，每个带一句话定位和最小验证方式。不要解释概念，直接带我动手。',
+    cta: '去问店小二',
+  },
+  {
+    title: '写成一句话 PRD',
+    hint: '想法再小也要写下来，才知道自己要做什么。',
+    prompt: '我是路线图第 2 步。帮我把想法写成一句话 PRD，包含：为谁解决什么问题、核心功能 3 个、不做哪些、怎么验证成功。先问我的想法是什么，然后直接给我填好的模板。不要解释 PRD 是什么，直接给模板让我填。',
+    cta: '去问店小二',
+  },
+  {
+    title: '选对你的工具',
+    hint: '零基础别纠结，选一个就开干。',
+    prompt: '我是路线图第 3 步。我是零基础，帮我从 Cursor / Lovable / v0 / Trae 里选一个，直接告诉我选哪个、为什么、第一步在工具里输入什么。不要横向对比一大堆，给我一个能立刻动手的答案。',
+    cta: '去问店小二',
+  },
+  {
+    title: '跑通第一个页面',
+    hint: '先让它能跑，丑没关系。',
+    prompt: '我是路线图第 4 步。带我跑通第一个页面：给我一段能直接粘进工具的 prompt，基于我的产品想法生成首页骨架。先问我的想法和选的工具，然后给我那段 prompt。不要讲原理，直接给我能粘走的东西。',
+    cta: '去问店小二',
+  },
+  {
+    title: '加点功能',
+    hint: '数据库、登录、支付，一个一个来。',
+    prompt: '我是路线图第 5 步。我的产品要加功能了，帮我按优先级排：先加哪个（数据库/登录/支付），给我第一个功能的最小实现步骤。先问我现在做到哪了、想加什么，然后给步骤清单。',
+    cta: '去问店小二',
+  },
+  {
+    title: '部署上线',
+    hint: '给它一个公网地址，别人能访问才算赢。',
+    prompt: '我是路线图第 6 步。我的代码在本地能跑了，一步步教我部署到公网：推荐平台、配环境变量、绑定域名。先问我的技术栈，然后给我按步骤的操作清单，每步带具体命令或点击路径。',
+    cta: '去问店小二',
+  },
+  {
+    title: '发布广场开张',
+    hint: '让人看到，拿第一批反馈。',
+    prompt: '',
+    cta: '去发布开张',
+    isLaunch: true,
+  },
+];
+
+function openRoadmap() {
+  const modal = $('#roadmapModal');
+  const tl = $('#rmTimeline');
+  tl.innerHTML = '';
+  const current = State.roadmapStep || 1;
+  const done = State.roadmapDone || [];
+
+  ROADMAP_STEPS.forEach((step, i) => {
+    const n = i + 1;
+    const isDone = done.includes(n);
+    const isCurrent = n === current;
+    const isLast = n === ROADMAP_STEPS.length;
+    const node = html(`<div class="rm-step ${isCurrent ? 'current' : ''} ${isDone ? 'done' : ''} ${isLast ? 'last' : ''}">
+      <div class="rm-node">
+        <span class="rm-num">${isDone ? '✓' : n}</span>
+      </div>
+      <div class="rm-body">
+        <div class="rm-step-title">${escapeHtml(step.title)}</div>
+        <div class="rm-hint">${escapeHtml(step.hint)}</div>
+        <button class="btn-primary mini rm-cta" data-step="${n}">${escapeHtml(step.cta)}</button>
+      </div>
+    </div>`);
+    node.querySelector('.rm-cta').addEventListener('click', () => onRoadmapStepClick(step, n));
+    tl.appendChild(node);
+  });
+
+  $('#rmProgress').textContent = `第 ${current} 步 / 共 ${ROADMAP_STEPS.length} 步`;
+  modal.hidden = false;
+}
+
+function onRoadmapStepClick(step, n) {
+  // 标记当前步完成，推进
+  if (!(State.roadmapDone || []).includes(n)) State.roadmapDone.push(n);
+  if (n === State.roadmapStep && n < ROADMAP_STEPS.length) State.roadmapStep = n + 1;
+  saveState();
+
+  if (step.isLaunch) {
+    // 第 7 步：跳发布广场开张
+    $('#roadmapModal').hidden = true;
+    switchRoute('square');
+    setTimeout(() => openPublish(), 300);
+    return;
+  }
+
+  // 1-6 步：关弹窗，发行动导向 prompt 给店小二
+  $('#roadmapModal').hidden = true;
+  askAI(step.prompt);
+  const next = n < ROADMAP_STEPS.length ? `走第 ${n + 1} 步` : '去发布开张';
+  setTimeout(() => toast(`店小二在右边等你了。聊完回来点路线图，${next}`, 'ok', 4000), 600);
+}
+
+// ============================================================
+//  Use Case 引导小窗（新用户首次自动弹，卡片式轮播）
+// ============================================================
+const USECASE_PAGES = [
+  { img: './assets/usecase/uc-1.png', title: '学 · 做 · 成', desc: '零基础到做出第一个 AI 产品，再到被人看到，一站走完。' },
+  { img: './assets/usecase/uc-2.png', title: '选中就问', desc: '81 张卡片沿 7 阶段排开，选中任意文字直接问店小二。' },
+  { img: './assets/usecase/uc-3.png', title: '工具箱现成的', desc: '38 件 AgentSkills / MCP / Prompt，可复制可下载，还能喂给 AI。' },
+  { img: './assets/usecase/uc-4.png', title: '发广场开张', desc: '发布触发开张大吉，生成喜报 PNG，互评赚积分拿第一批反馈。' },
+  { img: './assets/usecase/uc-5.png', title: '店小二陪跑', desc: '知道你在学哪、读哪张卡，资讯和咨询同源贯通。' },
+];
+let ucStep = 0;
+
+function openUseCase() {
+  ucStep = 0;
+  const dots = $('#ucDots');
+  dots.innerHTML = '';
+  USECASE_PAGES.forEach((_, i) => {
+    dots.appendChild(html(`<span class="uc-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`));
+  });
+  dots.querySelectorAll('.uc-dot').forEach(d => d.addEventListener('click', () => renderUseCasePage(parseInt(d.dataset.i, 10))));
+  renderUseCasePage(0);
+  $('#useCaseModal').hidden = false;
+}
+
+function renderUseCasePage(i) {
+  ucStep = i;
+  const p = USECASE_PAGES[i];
+  const img = $('#ucImg');
+  img.classList.remove('uc-fade');
+  void img.offsetWidth;            // 重置动画
+  img.src = p.img;
+  img.classList.add('uc-fade');
+  $('#ucTitle').textContent = p.title;
+  $('#ucDesc').textContent = p.desc;
+  $$('.uc-dot').forEach((d, k) => d.classList.toggle('active', k === i));
+  const isLast = i === USECASE_PAGES.length - 1;
+  $('#ucNext').textContent = isLast ? '前往路线图' : '下一步';
+  $('#ucExplore').hidden = !isLast;
+}
+
+function closeUseCase() {
+  $('#useCaseModal').hidden = true;
+  try { localStorage.setItem('kz.useCaseSeen', '1'); } catch {}
+}
+
+// ============================================================
 //  CMD 控制台
 // ============================================================
 function openCmd() {
@@ -2557,6 +2705,7 @@ async function runCmd(raw) {
   notes                      list notes
   points                     show points
   almanac                    today's 宜忌
+  intro                      replay the use case intro
   sudo make me a product     :)
   clear                      clear console
   exit | Esc                 close console`, 'out');
@@ -2564,6 +2713,7 @@ async function runCmd(raw) {
   }
   if (cmd === 'clear') { $('#cmdBody').innerHTML = ''; return; }
   if (cmd === 'exit') { $('#cmdConsole').hidden = true; return; }
+  if (cmd === 'intro') { openUseCase(); $('#cmdConsole').hidden = true; return; }
   if (cmd === 'notes') { cmdPrint(State.notes.length ? State.notes.map(n => '- ' + n.title).join('\n') : '(empty)', 'out'); return; }
   if (cmd === 'points') { cmdPrint('points: ' + State.points, 'out'); return; }
   if (cmd === 'almanac') {
@@ -3005,6 +3155,23 @@ function bindEvents() {
     }
   });
 
+  // roadmap
+  $('#roadmapFab').addEventListener('click', openRoadmap);
+  $('#roadmapClose').addEventListener('click', () => $('#roadmapModal').hidden = true);
+
+  // use case intro
+  $('#useCaseClose').addEventListener('click', closeUseCase);
+  $('#ucNext').addEventListener('click', () => {
+    if (ucStep >= USECASE_PAGES.length - 1) {
+      closeUseCase();
+      setTimeout(openRoadmap, 300);
+      return;
+    }
+    renderUseCasePage(ucStep + 1);
+  });
+  $('#ucExplore').addEventListener('click', closeUseCase);
+  $('#useCaseModal').addEventListener('click', (e) => { if (e.target.id === 'useCaseModal') closeUseCase(); });
+
   // almanac
   renderAlmanac();
   $('#almanacFab').addEventListener('click', () => {
@@ -3042,8 +3209,18 @@ function bindEvents() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       $$('.modal').forEach(m => { if (!m.hidden) m.hidden = true; });
+      const uc = $('#useCaseModal'); if (uc && !uc.hidden) closeUseCase();
       const al = $('#almanac'); if (!al.hidden) al.hidden = true;
       const hd = $('#historyDrawer'); if (!hd.hidden) hd.hidden = true;
+    }
+    // use case 小窗：左右翻页
+    const uc = $('#useCaseModal');
+    if (uc && !uc.hidden) {
+      if (e.key === 'ArrowLeft' && ucStep > 0) renderUseCasePage(ucStep - 1);
+      if (e.key === 'ArrowRight') {
+        if (ucStep < USECASE_PAGES.length - 1) renderUseCasePage(ucStep + 1);
+        else { closeUseCase(); setTimeout(openRoadmap, 300); }
+      }
     }
   });
 
@@ -3126,18 +3303,19 @@ function init() {
   try { bindCoreTabsOnce(); } catch (e) { console.error(e); }
   try { tickDock(); } catch (e) { showRuntimeError(e); }
   try { loadState(); } catch (e) { showRuntimeError(e); }
-  // theme
-  if (localStorage.getItem('kz.theme') === 'light') {
-    document.body.classList.replace('theme-dark', 'theme-light');
+  // theme：默认浅色，用户存过 dark 才切回深色
+  if (localStorage.getItem('kz.theme') === 'dark') {
+    document.body.classList.replace('theme-light', 'theme-dark');
   }
-  // mermaid theme
+  const _isDark = document.body.classList.contains('theme-dark');
+  // mermaid theme：跟随当前主题
   try { if (window.mermaid) {
     window.mermaid.initialize({
       startOnLoad: false,
-      theme: 'dark',
+      theme: _isDark ? 'dark' : 'default',
       securityLevel: 'loose',
       flowchart: { curve: 'basis', htmlLabels: true },
-      themeVariables: {
+      themeVariables: _isDark ? {
         background: '#1C1E24',
         primaryColor: '#23262D',
         primaryTextColor: '#e6e6e6',
@@ -3146,6 +3324,17 @@ function init() {
         tertiaryColor: '#23262D',
         lineColor: '#60A5FA',
         textColor: '#cfd2d8',
+        fontFamily: 'ui-sans-serif',
+        fontSize: '13px',
+      } : {
+        background: '#FEFDFC',
+        primaryColor: '#FFFFFF',
+        primaryTextColor: '#1a1a1a',
+        primaryBorderColor: '#65A30D',
+        secondaryColor: '#FAFAFA',
+        tertiaryColor: '#FFFFFF',
+        lineColor: '#84CC16',
+        textColor: '#333',
         fontFamily: 'ui-sans-serif',
         fontSize: '13px',
       },
@@ -3168,6 +3357,10 @@ function init() {
   try { setupHoverLight(); } catch (e) { showRuntimeError(e); }
   try { mountAlmanacIntoUserFoot(); } catch (e) { showRuntimeError(e); }
   try { renderAIThread(); } catch (e) { /* welcome 时右栏隐藏，但 DOM 存在 */ }
+  // 新用户首次打开：自动弹 use case 引导
+  if (!localStorage.getItem('kz.useCaseSeen')) {
+    setTimeout(() => { try { openUseCase(); } catch (e) { console.error(e); } }, 500);
+  }
   window.__KZ_APP_READY__ = true;
 }
 
